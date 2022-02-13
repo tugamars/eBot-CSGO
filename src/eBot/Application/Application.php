@@ -94,6 +94,17 @@ class Application extends AbstractApplication {
                 $d = explode("---", $loggerData->shift());
                 $ip = array_shift($d);
                 $data = implode("---", $d);
+
+                $type="D";
+
+                if(strpos($data,'*') !== false){
+                    $type="C";
+                    $data=explode("*",$data,2);
+                    $ip=$data[0];
+                    $data="L ".$data[1];
+                    Logger::log($data);
+                }
+
                 $nbMessage--;
             } else {
                 usleep(500);
@@ -265,6 +276,7 @@ class Application extends AbstractApplication {
 
                     if (\eBot\Manager\MatchManager::getInstance()->getMatch($ip)) {
                         file_put_contents(APP_ROOT . "/logs/$ip", $line, FILE_APPEND);
+
                         $line = trim(substr($line, 23));
                         \eBot\Manager\MatchManager::getInstance()->getMatch($ip)->processMessage($line);
                         $line = substr($data, 7, strlen($data) - 8);
