@@ -88,13 +88,20 @@ function requestHandler (request, response) {
                         var ua=request.headers["user-agent"]+" ";
 
                         if(ua.indexOf("Valve") !== -1){
-                            var ip = request.headers["x-server-addr"];
 
-                            var dgram = new Buffer(ip+"*"+message);
 
-                            console.log("Sending -->" + ip+"*"+message);
+                            body.toString()
+                                .split("\n")
+                                .forEach(function(line) {
+                                    var ip = request.headers["x-server-addr"];
+                                    var dgram = new Buffer(ip+"*"+line);
 
-                            clientUDP.send(dgram, 0, dgram.length, udp_port, udp_ip);
+                                    console.log("Sending -->" + ip+"*"+line);
+
+                                    clientUDP.send(dgram, 0, dgram.length, udp_port, udp_ip);
+                                });
+
+
                         } else {
                             message = JSON.parse(body);
                         }
