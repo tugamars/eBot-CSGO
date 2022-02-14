@@ -102,7 +102,6 @@ class Application extends AbstractApplication {
                     $data=explode("*",$data,2);
                     $ip=$data[0];
                     $data="L ".$data[1];
-                    Logger::log($data);
                 }
 
                 $nbMessage--;
