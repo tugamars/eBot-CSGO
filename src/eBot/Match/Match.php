@@ -3419,6 +3419,21 @@ class Match implements Taskable {
         return $this->currentMap->getMapId();
     }
 
+    public function getMatchInformation(){
+        return array(
+            'team_a'=>array(
+                'name'=>$this->teamAName,
+                'score'=>$this->score['team_a']
+            ),
+            'team_b'=>array(
+                'name'=>$this->teamBName,
+                'score'=>$this->score['team_b']
+            ),
+            'status' => $this->getStatus(),
+            'status_text'=>$this->getStatusText()
+        );
+    }
+
 }
 
 ?>
