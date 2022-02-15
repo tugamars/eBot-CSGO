@@ -1347,6 +1347,8 @@ class Match implements Taskable {
                             $this->say($team . " (CT) match will be paused now!");
                         else
                             $this->say($team . " (CT) is requesting a TECH pause, the match will be paused in the next freezetime.");
+
+
                     }
                 } elseif ($message->getUserTeam() == "TERRORIST") {
                     $team = ($this->side['team_a'] == "t") ? $this->teamAName : $this->teamBName;
@@ -1361,6 +1363,14 @@ class Match implements Taskable {
                             $this->say($team . " (T) is requesting a TECH pause, the match will be paused in the next freezetime.");
                     }
                 }
+
+                $event = new \eBot\Events\Event\PauseRequested();
+                $event->setMatch($this);
+                $event->setType("tech");
+                $event->setTeamName($team);
+                $event->setTeamSide($message->getUserTeam());
+                \eBot\Events\EventDispatcher::getInstance()->dispatchEvent($event);
+
                 $this->pauseMatch();
             }
         } elseif ($this->isCommand($message, "unpause")) {
@@ -1456,15 +1466,26 @@ class Match implements Taskable {
             $this->say("CONNECT " . $this->server_ip . "; PASSWORD " . $this->matchData["config_password"] . ";");
         } elseif ($this->isCommand($message, "tac")) {
 
+            $team="?";
+
             if ($message->getUserTeam() == "CT") {
+                $team = ($this->side['team_a'] == "ct") ? $this->teamAName : $this->teamBName;
                 $this->rcon->send("timeout_ct_start");
                 $this->addMatchLog("CT team initiated a TIMEOUT.");
             }
 
             if ($message->getUserTeam() == "TERRORIST") {
+                $team = ($this->side['team_a'] == "ct") ? $this->teamAName : $this->teamBName;
                 $this->rcon->send("timeout_terrorist_start");
                 $this->addMatchLog("T team initiated a TIMEOUT.");
             }
+
+            $event = new \eBot\Events\Event\PauseRequested();
+            $event->setMatch($this);
+            $event->setType("tac");
+            $event->setTeamName($team);
+            $event->setTeamSide($message->getUserTeam());
+            \eBot\Events\EventDispatcher::getInstance()->dispatchEvent($event);
 
         } else {
             // Dispatching events
@@ -1751,6 +1772,8 @@ class Match implements Taskable {
                     $this->saveScore();
 
                     $this->rcon->send("mp_halftime_pausetimer 1");
+
+
                 }
             } elseif ($this->getStatus() == self::STATUS_SECOND_SIDE) {
                 if (($this->score["team_a"] + $this->score["team_b"] == $this->maxRound * 2) || ($this->score["team_a"] > $this->maxRound && !$this->config_full_score) || ($this->score["team_b"] > $this->maxRound && !$this->config_full_score)) {
@@ -2888,6 +2911,10 @@ class Match implements Taskable {
 
                     $this->addMatchLog("<b>INFO:</b> Launching RS.");
                     $this->addLog("Launching RS.");
+
+                    $event = new \eBot\Events\Event\MatchStart();
+                    $event->setMatch($this);
+                    \eBot\Events\EventDispatcher::getInstance()->dispatchEvent($event);
 
                     switch ($this->currentMap->getStatus()) {
                         case Map::STATUS_WU_1_SIDE:

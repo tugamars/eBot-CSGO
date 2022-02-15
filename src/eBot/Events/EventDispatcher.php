@@ -25,6 +25,9 @@ class EventDispatcher extends Singleton {
     const EVENT_KILL = "eBot\Events\Event\Kill";
     const EVENT_ROUNDSCORED = "eBot\Events\Event\RoundScored";
     const EVENT_MATCH_END = "eBot\Events\Event\MatchEnd";
+    const EVENT_MATCH_START = "eBot\Events\Event\MatchStart";
+    const EVENT_HALFTIME_REACHED = "eBot\Events\Event\HalftimeReached";
+    const EVENT_PAUSE_REQUESTED = "eBot\Events\Event\PauseRequested";
 
     public function __construct() {
         $this->listeners[self::EVENT_SAY] = array();
@@ -33,6 +36,9 @@ class EventDispatcher extends Singleton {
         $this->listeners[self::EVENT_KILL] = array();
         $this->listeners[self::EVENT_ROUNDSCORED] = array();
         $this->listeners[self::EVENT_MATCH_END] = array();
+        $this->listeners[self::EVENT_MATCH_START] = array();
+        $this->listeners[self::EVENT_HALFTIME_REACHED] = array();
+        $this->listeners[self::EVENT_PAUSE_REQUESTED] = array();
 
         /*$this->listeners["RoundScored"] = array();
         $this->listeners["RoundEnd"] = array();
