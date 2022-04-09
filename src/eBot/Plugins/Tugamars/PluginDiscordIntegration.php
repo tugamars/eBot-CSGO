@@ -23,7 +23,8 @@ class PluginDiscordIntegration implements Plugin
             'live'=>$config["webhookurl"]
         );
 
-        Logger::log("Webhook URL to perform: " . $this->webhookUrl);
+        Logger::log("Webhook URL to perform: " . $this->webhooksUrl['logs']);
+        Logger::log("Webhook URL to perform: " . $this->webhooksUrl['live']);
     }
 
     public function getEventList()
@@ -76,7 +77,7 @@ class PluginDiscordIntegration implements Plugin
 
                 break;
             case \eBot\Events\EventDispatcher::EVENT_ROUNDSCORED:
-                $sendTo=array('logs','live');
+                $sendTo=array('logs');
                 $embedMessage="Round ended";
                 break;
             case \eBot\Events\EventDispatcher::EVENT_MATCH_START:
