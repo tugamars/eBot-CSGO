@@ -27,17 +27,29 @@ class DiscordTrait
 
         Logger::log($postdata);
 
-        $opts = array('http' =>
-            array(
-                'method'  => 'POST',
-                'header'  => 'Content-Type: application/json',
-                'content' => $postdata
-            )
-        );
-
-        $context = stream_context_create($opts);
         Logger::log(" - Perf $url");
-        $result = file_get_contents($url, false, $context);
+		
+		if(function_exists('curl_version')) {
+			$ch = curl_init( $url );
+			curl_setopt( $ch, CURLOPT_POSTFIELDS, $postdata );
+			curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+			$result = curl_exec($ch);
+			curl_close($ch);
+		} else {
+			$opts = array('http' =>
+				array(
+					'method'  => 'POST',
+					'header'  => 'Content-Type: application/json',
+					'content' => $postdata
+				)
+			);
+
+			$context = stream_context_create($opts);
+			Logger::log(" - Perf $url");
+			$result = file_get_contents($url, false, $context);
+		}
+		
 
     }
 }
